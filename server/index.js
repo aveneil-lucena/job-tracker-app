@@ -17,6 +17,11 @@ app.use((req, res, next) => {
   next();
 });
 
+const auth = require('./middleware/auth'); // import middleware here
+app.get('/api/test-auth', auth, (req, res) => {
+  res.json({ message: 'Auth middleware working!', userId: req.user });
+});
+
 mongoose.connect(mongoUri)
     .then(() => {
       console.log('MongoDB connected successfully!');
