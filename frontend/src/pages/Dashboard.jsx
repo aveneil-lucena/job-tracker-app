@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 export default function Dashboard() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -27,13 +29,32 @@ export default function Dashboard() {
     fetchJobs();
   }, []);
 
+  const filteredJobs =
+  statusFilter === 'all'
+    ? jobs
+    : jobs.filter((job) => job.status === statusFilter);
+
+    
   return (
     <div style={{ padding: '2rem' }}>
       <h2>Dashboard</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {jobs.length > 0 ? (
+      <label htmlFor="statusFilter">Filter by status: </label>
+      <select
+        id="statusFilter"
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+      >
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="interview">Interview</option>
+        <option value="offer">Offer</option>
+        <option value="declined">Declined</option>
+        <option value="accepted">Accepted</option>
+      </select>
+      {filteredJobs.length > 0 ? (
         <ul>
-          {jobs.map(job => (
+          {filteredJobs.map(job => (
             <li key={job._id}>
               <strong>{job.title}</strong> at {job.company} — <em>{job.status}</em>
             </li>
