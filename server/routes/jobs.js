@@ -69,46 +69,6 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   PATCH /api/jobs/:id
-// @desc    Update a job by ID (only if owned by user)
-// @access  Private
-router.patch('/:id', auth, async (req, res) => {
-  try {
-    const jobId = req.params.id;
-    const userId = req.user;
-    const updateFields = req.body;
-
-    // Only allow certain fields to be updated for safety
-    const allowedUpdates = ['title', 'company', 'status', 'notes'];
-    const isValidOperation = Object.keys(updateFields).every(field =>
-      allowedUpdates.includes(field)
-    );
-
-    if (!isValidOperation) {
-      return res.status(400).json({ message: 'Invalid update fields' });
-    }
-
-    const job = await Job.findOne({ _id: jobId, createdBy: userId });
-    if (!job) {
-      return res.status(404).json({ message: 'Job not found' });
-    }
-
-    // Update fields
-    Object.keys(updateFields).forEach(field => {
-      job[field] = updateFields[field];
-    });
-
-    const updatedJob = await job.save();
-    res.status(200).json(updatedJob);
-  } catch (err) {
-    console.error('Error updating job:', err);
-    if (err.kind === 'ObjectId') {
-      return res.status(400).json({ message: 'Invalid job ID' });
-    }
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
 // @route   DELETE /api/jobs/:id
 // @desc    Delete a job by ID (only if owned by user)
 // @access  Private
@@ -133,5 +93,27 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+
+// @route   UPDATE /api/jobs/:id
+// @desc    Update a job by ID (only if owned by user)
+// @access  Private
+router.put('/:id', auth, async (req, res) => {
+  try {
+    const job = await Job.findOneAndUpdate(
+      { _id: req.params.id, createdBy: req.user },
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found or not authorized' });
+    }
+
+    res.status(200).json({ message: 'Job updated successfully', job });
+  } catch (err) {
+    console.error('Error updating job:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
 module.exports = router;

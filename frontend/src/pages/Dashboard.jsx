@@ -3,7 +3,16 @@ import React, { useEffect, useState } from 'react';
 export default function Dashboard() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState('');
+
+  const [editingJob, setEditingJob] = useState(null);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    company: '',
+    status: '',
+    notes: ''
+  });
   const [statusFilter, setStatusFilter] = useState('all');
+  
   //Job list pagination, and deletion
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
@@ -13,16 +22,26 @@ export default function Dashboard() {
     return;
   try {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/jobs/${id}`, {
-      method: 'DELETE',
+    const res = await fetch(`http://localhost:5000/api/jobs/${editingJob}`, {
+      method: 'PUT',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
-      }
+      },
+      body: JSON.stringify(editForm)
     });
 
-    const data = await res.json();
+    const text = await res.text(); // Grab raw response for debugging
+    console.log('Raw response:', text);
 
-    if (!res.ok) throw new Error(data.message || 'Failed to delete job');
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseErr) {
+      throw new Error(`Failed to parse JSON: ${parseErr.message}. Response: ${text}`);
+    }
+
+    if (!res.ok) throw new Error(data.message || 'Failed to update job');
     // Update local state to remove the deleted job
     setJobs(prevJobs => prevJobs.filter(job => job._id !== id));
   } 
@@ -32,6 +51,46 @@ export default function Dashboard() {
   };
   //End job list pagination, and deletion
   
+  // Handle edit functionality
+  const handleEdit = (job) => {
+  setEditingJob(job._id);
+  setEditForm({
+    title: job.title,
+    company: job.company,
+    status: job.status,
+    notes: job.notes
+    });
+  };
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/api/jobs/${editingJob}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(editForm)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || 'Failed to update job');
+
+      setJobs(prev =>
+        prev.map(job => job._id === editingJob ? { ...job, ...editForm } : job)
+      );
+
+      setEditingJob(null);
+      setEditForm({ title: '', company: '', status: '', notes: '' });
+    } catch (err) {
+      alert('Error updating job: ' + err.message);
+    }
+  };
+  // End handle edit functionality
+
   // Job fetch
   useEffect(() => {
     const fetchJobs = async () => {
@@ -66,6 +125,8 @@ export default function Dashboard() {
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+  
+  console.log('Current Jobs:', jobs);
 
   return (
     <div style={{ padding: '2rem' }}>
@@ -89,9 +150,17 @@ export default function Dashboard() {
       {currentJobs.length > 0 ? (
         <ul>
           {currentJobs.map(job => (
-            <li key={job._id} style={{ marginBottom: '1rem' }}>
-              <strong>{job.title}</strong> at {job.company} — <em>{job.status}</em>
-              <br />
+            <li key={job._id}>
+              <strong>{job.title}</strong> at {job.company} — <em>{job.status}</em><br />
+              <small>ID: {job._id}</small>
+              {/* Edit button */}
+              <button
+                onClick={() => handleEdit(job)}
+                style={{ marginTop: '0.3rem', marginRight: '0.5rem', color: 'white', background: 'orange', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
+              >
+                Edit
+              </button>
+              {/* Delete button */}
               <button
                 onClick={() => handleDelete(job._id)}
                 style={{ marginTop: '0.3rem', color: 'white', background: 'red', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
@@ -123,6 +192,45 @@ export default function Dashboard() {
           </button>
         ))}
       </div>
+      {/* Edit buttons */}
+      {editingJob && (
+      <form onSubmit={handleUpdate} style={{ marginTop: '2rem' }}>
+        <h3>Edit Job</h3>
+        <input
+          type="text"
+          placeholder="Title"
+          value={editForm.title}
+          onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Company"
+          value={editForm.company}
+          onChange={(e) => setEditForm({ ...editForm, company: e.target.value })}
+          required
+        />
+        <select
+          value={editForm.status}
+          onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+          required
+        >
+          <option value="pending">Pending</option>
+          <option value="interview">Interview</option>
+          <option value="offer">Offer</option>
+          <option value="declined">Declined</option>
+          <option value="accepted">Accepted</option>
+        </select>
+        <textarea
+          placeholder="Notes"
+          value={editForm.notes}
+          onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+        />
+        <br />
+        <button type="submit" style={{ marginTop: '1rem' }}>Update Job</button>
+        <button type="button" onClick={() => setEditingJob(null)} style={{ marginLeft: '1rem' }}>Cancel</button>
+      </form>
+    )}
     </div>
   );
 }
