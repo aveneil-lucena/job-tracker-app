@@ -1,13 +1,17 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 export default function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove token
     navigate('/login'); // Redirect to login page
   };
+
+  const goToProfile = () => navigate('/profile');
+  const goToDashboard = () => navigate('/dashboard');
 
   return (
     <header
@@ -19,13 +23,43 @@ export default function Header() {
         alignItems: 'center',
       }}
     >
-      <h1>Job Tracker</h1>
+    <h1 
+        style={{ cursor: 'pointer' }} 
+        onClick={goToDashboard}>Job Tracker
+    </h1>
 
       <nav style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-        <Link to="/profile" style={{ textDecoration: 'none', color: '#333', fontWeight: 'bold' }}>
-          Profile
-        </Link>
-
+              <div>
+        {location.pathname !== '/profile' && (
+          <button
+            onClick={goToProfile}
+            style={{
+              marginRight: '1rem',
+              background: 'blue',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Profile
+          </button>
+        )}
+        {location.pathname !== '/dashboard' && (
+          <button
+            onClick={goToDashboard}
+            style={{
+              marginRight: '1rem',
+              background: 'green',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Dashboard
+          </button>
+        )}
         <button
           onClick={handleLogout}
           style={{
@@ -38,6 +72,7 @@ export default function Header() {
         >
           Logout
         </button>
+        </div>
       </nav>
     </header>
   );
