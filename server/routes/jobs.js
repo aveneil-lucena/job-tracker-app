@@ -44,4 +44,31 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// @route   GET /api/jobs/:id
+// @desc    Get a single job by ID (only if owned by user)
+// @access  Private
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const userId = req.user;
+
+    const job = await Job.findOne({ _id: jobId, createdBy: userId });
+
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    res.status(200).json(job);
+  } catch (err) {
+    console.error('Error fetching job by ID:', err);
+    if (err.kind === 'ObjectId') {
+      // Invalid ObjectId format
+      return res.status(400).json({ message: 'Invalid job ID' });
+    }
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
 module.exports = router;
