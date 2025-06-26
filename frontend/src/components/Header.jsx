@@ -15,13 +15,22 @@ export default function Header() {
 
   return (
     <header
-      style={{
-        padding: '1rem',
+    style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        width: '100%',
         backgroundColor: '#f5f5f5',
+        padding: '1rem 2rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-      }}
+        zIndex: 1000,
+        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+        boxSizing: 'border-box',
+        overflowX: 'hidden'
+    }}
     >
     <h1 
         style={{ cursor: 'pointer' }} 
