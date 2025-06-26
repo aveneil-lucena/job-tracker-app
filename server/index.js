@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const mongoUri = process.env.MONGO_URI; 
 const PORT = process.env.PORT || 5000;
 
-// Middleware (optional but recommended)
+// Middleware stuff :3
 app.use(express.json());
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
@@ -22,6 +22,14 @@ app.get('/api/test-auth', auth, (req, res) => {
   res.json({ message: 'Auth middleware working!', userId: req.user });
 });
 
+const jobRoutes = require('./routes/jobs');
+app.use('/api/jobs', jobRoutes);
+
+
+
+
+
+// Database connection
 mongoose.connect(mongoUri)
     .then(() => {
       console.log('MongoDB connected successfully!');
