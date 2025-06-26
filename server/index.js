@@ -1,7 +1,9 @@
 require('dotenv').config();
 
 const express = require('express');   // Import express
+const cors = require('cors');
 const app = express();                // Initialize app instance
+app.use(cors());
 
 const mongoose = require('mongoose');
 const mongoUri = process.env.MONGO_URI; 
@@ -13,6 +15,10 @@ const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 const jobRoutes = require('./routes/jobs');
 app.use('/api/jobs', jobRoutes);
+app.use(cors({
+  origin: 'http://localhost:5173', // or 3000 depending on Vite config
+  credentials: true
+}));
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
