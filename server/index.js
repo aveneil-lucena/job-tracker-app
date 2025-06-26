@@ -15,6 +15,8 @@ const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 const jobRoutes = require('./routes/jobs');
 app.use('/api/jobs', jobRoutes);
+const userRoutes = require('./routes/user');
+app.use('/api/users', userRoutes);
 app.use(cors({
   origin: 'http://localhost:5173', // or 3000 depending on Vite config
   credentials: true
