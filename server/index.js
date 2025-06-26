@@ -11,6 +11,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
+const jobRoutes = require('./routes/jobs');
+app.use('/api/jobs', jobRoutes);
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -21,9 +23,6 @@ const auth = require('./middleware/auth'); // import middleware here
 app.get('/api/test-auth', auth, (req, res) => {
   res.json({ message: 'Auth middleware working!', userId: req.user });
 });
-
-const jobRoutes = require('./routes/jobs');
-app.use('/api/jobs', jobRoutes);
 
 
 
