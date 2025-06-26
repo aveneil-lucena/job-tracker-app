@@ -4,9 +4,35 @@ export default function Dashboard() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  //Job list pagination, and deletion
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
+  const handleDelete = async (id) => {
+  const confirmDelete = window.confirm('Are you sure you want to delete this job?');
+  if (!confirmDelete) 
+    return;
+  try {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`http://localhost:5000/api/jobs/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || 'Failed to delete job');
+    // Update local state to remove the deleted job
+    setJobs(prevJobs => prevJobs.filter(job => job._id !== id));
+  } 
+  catch (err) {
+    alert('Error deleting job: ' + err.message);
+  }
+  };
+  //End job list pagination, and deletion
+  
+  // Job fetch
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -63,8 +89,15 @@ export default function Dashboard() {
       {currentJobs.length > 0 ? (
         <ul>
           {currentJobs.map(job => (
-            <li key={job._id}>
+            <li key={job._id} style={{ marginBottom: '1rem' }}>
               <strong>{job.title}</strong> at {job.company} — <em>{job.status}</em>
+              <br />
+              <button
+                onClick={() => handleDelete(job._id)}
+                style={{ marginTop: '0.3rem', color: 'white', background: 'red', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
+              >
+                Delete
+              </button>
             </li>
           ))}
         </ul>
