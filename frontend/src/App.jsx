@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import AddJob from './pages/AddJob';
 import Header from './components/Header';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -14,7 +15,6 @@ function App() {
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-
         <Route
           path="/dashboard"
           element={
@@ -33,6 +33,17 @@ function App() {
               <>
                 <Header />
                 <AddJob />
+              </>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <>
+                <Header />
+                <Profile />
               </>
             </PrivateRoute>
           }
