@@ -219,18 +219,21 @@ export default function Dashboard() {
       <ul style={{ paddingLeft: 0, margin: 0 }}>
         {currentJobs.map(job => (
         <li key={job._id} style={{ listStyle: 'none', marginBottom: '1rem' }}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: 2,
-              backgroundColor: 'white',
-              borderRadius: 2,
-              boxShadow: 2,
-              flexDirection: 'column',
-            }}
-          >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap', // allow wrap instead of forcing one line
+            padding: 2,
+            backgroundColor: 'white',
+            borderRadius: 2,
+            boxShadow: 2,
+            width: '100%',
+            boxSizing: 'border-box',
+            overflow: 'hidden',
+          }}
+        >
             <Box
               sx={{
                 width: '100%',
@@ -339,22 +342,17 @@ export default function Dashboard() {
           </Box>
         </li>
           ))}
-      </ul>
+          </ul>
         ) : (
-          <p>No jobs found.</p>
+            <p>No jobs found.</p>
         )}
       </div>
 
       {/* Pagination buttons */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          mt: 2,
-          flexWrap: 'wrap', // handles wrapping on small screens
-        }}
-      >
+      <div style=
+      {{ 
+        marginTop: '1rem', 
+      }}>
         {Array.from({ length: Math.ceil(filteredJobs.length / jobsPerPage) }).map((_, index) => (
           <Button
             key={index}
@@ -367,79 +365,9 @@ export default function Dashboard() {
             {index + 1}
           </Button>
         ))}
-      </Box>
-
+      </div>
       {/* Edit buttons */}
-      {editingJob && (
-      <Box
-        component="form"
-        onSubmit={handleUpdate}
-        sx={{
-          mt: 4,
-          p: 4,
-          backgroundColor: 'white',
-          borderRadius: 2,
-          boxShadow: 3,
-          width: '90%',
-        }}
-      >
-        <Typography variant="h6" gutterBottom>
-          Edit Job
-        </Typography>
 
-        <TextField
-          fullWidth
-          label="Title"
-          value={editForm.title}
-          onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-          margin="normal"
-          required
-        />
-
-        <TextField
-          fullWidth
-          label="Company"
-          value={editForm.company}
-          onChange={(e) => setEditForm({ ...editForm, company: e.target.value })}
-          margin="normal"
-          required
-        />
-
-        <FormControl fullWidth margin="normal" required>
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={editForm.status}
-            onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-            label="Status"
-          >
-            <MenuItem value="pending">Pending</MenuItem>
-            <MenuItem value="interview">Interview</MenuItem>
-            <MenuItem value="offer">Offer</MenuItem>
-            <MenuItem value="declined">Declined</MenuItem>
-            <MenuItem value="accepted">Accepted</MenuItem>
-          </Select>
-        </FormControl>
-
-        <TextField
-          fullWidth
-          label="Notes"
-          multiline
-          rows={3}
-          value={editForm.notes}
-          onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-          margin="normal"
-        />
-
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
-          <Button variant="contained" color="primary" type="submit">
-            Update Job
-          </Button>
-          <Button variant="outlined" color="secondary" onClick={() => setEditingJob(null)}>
-            Cancel
-          </Button>
-        </Box>
-      </Box>
-    )}
     </Paper>
     </Box>
   );
