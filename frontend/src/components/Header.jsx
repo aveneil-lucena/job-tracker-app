@@ -21,30 +21,48 @@ export default function Header() {
         >
         Job Tracker
         </Typography>
-        <Box>
-          {location.pathname !== '/profile' && (
-            <Button color="inherit" onClick={() => navigate('/profile')} sx={{ mr: 1 }}>
-              Profile
-            </Button>
-          )}
-          {location.pathname !== '/dashboard' && (
-            <Button color="inherit" onClick={() => navigate('/dashboard')} sx={{ mr: 1 }}>
-              Dashboard
-            </Button>
-          )}
-            <Button
-            sx={{
-                color: '#fff',               // Text color
-                backgroundColor: '#6649ab', // Button background
-                '&:hover': {
-                backgroundColor: '#403f9f',
-                }
-            }}
-            onClick={handleLogout}
-            >
-            Logout
-            </Button>
-        </Box>
+<Box sx={{ display: 'flex', gap: 1 }}>
+  {location.pathname !== '/profile' && (
+    <Button
+      color="inherit"
+      onClick={() => navigate('/profile')}
+      sx={{ textTransform: 'none' }}
+    >
+      Profile
+    </Button>
+  )}
+  {location.pathname !== '/add-job' && (
+    <Button
+      color="inherit"
+      onClick={() => navigate('/add-job')}
+      sx={{ textTransform: 'none' }}
+    >
+      Add Job
+    </Button>
+  )}
+  {location.pathname !== '/dashboard' && (
+    <Button
+      color="inherit"
+      onClick={() => navigate('/dashboard')}
+      sx={{ textTransform: 'none' }}
+    >
+      Dashboard
+    </Button>
+  )}
+  <Button
+    onClick={handleLogout}
+    sx={{
+      color: '#fff',
+      backgroundColor: '#6649ab',
+      textTransform: 'none',
+      '&:hover': {
+        backgroundColor: '#403f9f',
+      },
+    }}
+  >
+    Logout
+  </Button>
+</Box>
       </Toolbar>
     </AppBar>
   );
