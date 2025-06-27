@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import backgroundImage from '../assets/lined-bg.jpg';
+import { Box } from '@mui/material';
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState([]);
@@ -11,7 +13,9 @@ export default function Dashboard() {
     status: '',
     notes: ''
   });
+  
   const [statusFilter, setStatusFilter] = useState('all');
+  const [fadeClass, setFadeClass] = useState('fade-enter-active');
   
   //Job list pagination, and deletion
   const [currentPage, setCurrentPage] = useState(1);
@@ -115,6 +119,17 @@ export default function Dashboard() {
     fetchJobs();
   }, []);
 
+    // Fade effect
+    useEffect(() => {
+    setFadeClass('fade-enter'); // Start fade-out
+
+    const timeout = setTimeout(() => {
+      setFadeClass('fade-enter-active'); // Fade back in after slight delay
+    }, 50); // Small delay to allow reflow
+
+    return () => clearTimeout(timeout); // Clean up timeout
+  }, [statusFilter]);
+
   // Filter jobs by status
   const filteredJobs =
   statusFilter === 'all'
@@ -129,14 +144,46 @@ export default function Dashboard() {
   console.log('Current Jobs:', jobs);
 
   return (
+    <Box
+      sx={{
+        minHeight: '100vh',
+        width: '100vw',
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingTop: '150px',
+        overflowX: 'hidden',
+        boxSizing: 'border-box'
+      }}
+    >
+      <div
+        style={{
+          padding: '2rem',
+          width: '600px',      // fixed width or use 'minWidth' instead
+          minWidth: '500px',   // ensures it doesn’t shrink smaller than this
+          margin: '0 auto',    // centers horizontally
+          color: 'black',
+        }}
+      >
     <div style={{ padding: '2rem' }}>
       <h2>Dashboard</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <label htmlFor="statusFilter">Filter by status: </label>
+      
       <select
         id="statusFilter"
         value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value)}
+        onChange={(e) => {
+          const value = e.target.value;
+          setStatusFilter(value);           // Update state immediately to keep dropdown in sync
+          setFadeClass('fade-exit');        // Trigger fade out
+          setTimeout(() => {
+            setFadeClass('fade-enter');     // Trigger fade in
+          }, 150); // Match this to your CSS transition duration
+        }}
       >
         <option value="all">All</option>
         <option value="pending">Pending</option>
@@ -147,35 +194,40 @@ export default function Dashboard() {
       </select>
 
       {/* Job list */}
-      {currentJobs.length > 0 ? (
-        <ul>
-          {currentJobs.map(job => (
-            <li key={job._id}>
-              <strong>{job.title}</strong> at {job.company} — <em>{job.status}</em><br />
-              <small>ID: {job._id}</small>
-              {/* Edit button */}
-              <button
-                onClick={() => handleEdit(job)}
-                style={{ marginTop: '0.3rem', marginRight: '0.5rem', color: 'white', background: 'orange', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
-              >
-                Edit
-              </button>
-              {/* Delete button */}
-              <button
-                onClick={() => handleDelete(job._id)}
-                style={{ marginTop: '0.3rem', color: 'white', background: 'red', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
-              >
-                Delete
-              </button>
+      <div className={`job-list ${fadeClass}`}>
+        {currentJobs.length > 0 ? (
+          <ul>
+            {currentJobs.map(job => (
+              <li key={job._id}>
+                <strong>{job.title}</strong> at {job.company} — <em>{job.status}</em><br />
+                {/*<small>ID: {job._id}</small>*/}
+                {/* Edit button */}
+                <button
+                  onClick={() => handleEdit(job)}
+                  style={{ marginTop: '0.3rem', marginRight: '0.5rem', color: 'white', background: 'orange', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
+                >
+                  Edit
+                </button>
+                {/* Delete button */}
+                <button
+                  onClick={() => handleDelete(job._id)}
+                  style={{ marginTop: '0.3rem', color: 'white', background: 'red', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
+                >
+                  Delete
+                </button>
             </li>
           ))}
-        </ul>
-      ) : (
-        <p>No jobs found.</p>
-      )}
+          </ul>
+        ) : (
+            <p>No jobs found.</p>
+        )}
+      </div>
 
       {/* Pagination buttons */}
-      <div style={{ marginTop: '1rem' }}>
+      <div style=
+      {{ 
+        marginTop: '1rem', 
+      }}>
         {Array.from({ length: Math.ceil(filteredJobs.length / jobsPerPage) }).map((_, index) => (
           <button
             key={index}
@@ -232,5 +284,7 @@ export default function Dashboard() {
       </form>
     )}
     </div>
+    </div>
+    </Box>
   );
 }
