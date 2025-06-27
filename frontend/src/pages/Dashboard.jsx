@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import backgroundImage from '../assets/lined-bg.jpg';
-import { Box } from '@mui/material';
+import {  TextField, Select, MenuItem, InputLabel, FormControl, Typography,
+  Box, Paper, Button, Chip } from '@mui/material';
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState([]);
@@ -109,13 +110,11 @@ export default function Dashboard() {
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.message || 'Failed to fetch jobs');
-
         setJobs(data);
       } catch (err) {
         setError(err.message);
       }
     };
-
     fetchJobs();
   }, []);
 
@@ -129,6 +128,7 @@ export default function Dashboard() {
 
     return () => clearTimeout(timeout); // Clean up timeout
   }, [statusFilter]);
+    // end Fade effect
 
   // Filter jobs by status
   const filteredJobs =
@@ -142,6 +142,24 @@ export default function Dashboard() {
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   
   console.log('Current Jobs:', jobs);
+  
+  // Conditional status colors
+  const getStatusColor = (status) => {
+  switch (status) {
+    case 'accepted':
+      return 'success';
+    case 'pending':
+      return 'default';
+    case 'declined':
+      return 'error';
+    case 'offer':
+      return 'info';
+    case 'interview':
+      return 'warning';
+    default:
+      return 'default';
+  }
+};
 
   return (
     <Box
@@ -154,22 +172,24 @@ export default function Dashboard() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        paddingTop: '150px',
+        paddingTop: '100px',
         overflowX: 'hidden',
         boxSizing: 'border-box'
       }}
     >
-      <div
-        style={{
-          padding: '2rem',
-          width: '600px',      // fixed width or use 'minWidth' instead
-          minWidth: '500px',   // ensures it doesn’t shrink smaller than this
-          margin: '0 auto',    // centers horizontally
+      <Paper
+        elevation={3}
+        sx={{
+          padding: 4,
+          width: '700px',
+          minWidth: '500px',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: 2,
           color: 'black',
+          mb: 4
         }}
       >
-    <div style={{ padding: '2rem' }}>
-      <h2>Dashboard</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Job Dashboard</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <label htmlFor="statusFilter">Filter by status: </label>
       
@@ -196,95 +216,231 @@ export default function Dashboard() {
       {/* Job list */}
       <div className={`job-list ${fadeClass}`}>
         {currentJobs.length > 0 ? (
-          <ul>
-            {currentJobs.map(job => (
-              <li key={job._id}>
-                <strong>{job.title}</strong> at {job.company} — <em>{job.status}</em><br />
-                {/*<small>ID: {job._id}</small>*/}
-                {/* Edit button */}
-                <button
+      <ul style={{ paddingLeft: 0, margin: 0 }}>
+        {currentJobs.map(job => (
+        <li key={job._id} style={{ listStyle: 'none', marginBottom: '1rem' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: 2,
+              backgroundColor: 'white',
+              borderRadius: 2,
+              boxShadow: 2,
+              flexDirection: 'column',
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Box>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {job.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {job.company}
+                </Typography>
+                <Chip
+                  label={job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+                  color={getStatusColor(job.status)}
+                  size="small"
+                  sx={{ mt: 0.5 }}
+                />
+              </Box>
+
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="warning"
                   onClick={() => handleEdit(job)}
-                  style={{ marginTop: '0.3rem', marginRight: '0.5rem', color: 'white', background: 'orange', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
                 >
                   Edit
-                </button>
-                {/* Delete button */}
-                <button
+                </Button>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="error"
                   onClick={() => handleDelete(job._id)}
-                  style={{ marginTop: '0.3rem', color: 'white', background: 'red', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
                 >
                   Delete
-                </button>
-            </li>
+                </Button>
+              </Box>
+            </Box>
+
+            {/* Show the form if this job is being edited */}
+            {editingJob === job._id && (
+              <Box
+                component="form"
+                onSubmit={handleUpdate}
+                sx={{
+                  mt: 2,
+                  width: '100%',
+                  backgroundColor: '#f9f9f9',
+                  padding: 2,
+                  borderRadius: 1,
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Title"
+                  value={editForm.title}
+                  onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                  margin="normal"
+                  required
+                />
+                <TextField
+                  fullWidth
+                  label="Company"
+                  value={editForm.company}
+                  onChange={(e) => setEditForm({ ...editForm, company: e.target.value })}
+                  margin="normal"
+                  required
+                />
+                <FormControl fullWidth margin="normal" required>
+                  <InputLabel>Status</InputLabel>
+                  <Select
+                    value={editForm.status}
+                    onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                    label="Status"
+                  >
+                    <MenuItem value="pending">Pending</MenuItem>
+                    <MenuItem value="interview">Interview</MenuItem>
+                    <MenuItem value="offer">Offer</MenuItem>
+                    <MenuItem value="declined">Declined</MenuItem>
+                    <MenuItem value="accepted">Accepted</MenuItem>
+                  </Select>
+                </FormControl>
+                <TextField
+                  fullWidth
+                  label="Notes"
+                  multiline
+                  rows={3}
+                  value={editForm.notes}
+                  onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                  margin="normal"
+                />
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                  <Button type="submit" variant="contained" color="primary">
+                    Save
+                  </Button>
+                  <Button variant="outlined" onClick={() => setEditingJob(null)}>
+                    Cancel
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        </li>
           ))}
-          </ul>
+      </ul>
         ) : (
-            <p>No jobs found.</p>
+          <p>No jobs found.</p>
         )}
       </div>
 
       {/* Pagination buttons */}
-      <div style=
-      {{ 
-        marginTop: '1rem', 
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          mt: 2,
+          flexWrap: 'wrap', // handles wrapping on small screens
+        }}
+      >
         {Array.from({ length: Math.ceil(filteredJobs.length / jobsPerPage) }).map((_, index) => (
-          <button
+          <Button
             key={index}
+            variant={currentPage === index + 1 ? 'contained' : 'outlined'}
+            color="primary"
             onClick={() => setCurrentPage(index + 1)}
             disabled={currentPage === index + 1}
-            style={{
-              margin: '0 5px',
-              padding: '5px 10px',
-              cursor: currentPage === index + 1 ? 'default' : 'pointer',
-              backgroundColor: currentPage === index + 1 ? '#ccc' : '#fff'
-            }}
+            sx={{ mx: 0.5, my: 1, minWidth: 36 }}
           >
             {index + 1}
-          </button>
+          </Button>
         ))}
-      </div>
+      </Box>
+
       {/* Edit buttons */}
       {editingJob && (
-      <form onSubmit={handleUpdate} style={{ marginTop: '2rem' }}>
-        <h3>Edit Job</h3>
-        <input
-          type="text"
-          placeholder="Title"
+      <Box
+        component="form"
+        onSubmit={handleUpdate}
+        sx={{
+          mt: 4,
+          p: 4,
+          backgroundColor: 'white',
+          borderRadius: 2,
+          boxShadow: 3,
+          width: '90%',
+        }}
+      >
+        <Typography variant="h6" gutterBottom>
+          Edit Job
+        </Typography>
+
+        <TextField
+          fullWidth
+          label="Title"
           value={editForm.title}
           onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+          margin="normal"
           required
         />
-        <input
-          type="text"
-          placeholder="Company"
+
+        <TextField
+          fullWidth
+          label="Company"
           value={editForm.company}
           onChange={(e) => setEditForm({ ...editForm, company: e.target.value })}
+          margin="normal"
           required
         />
-        <select
-          value={editForm.status}
-          onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-          required
-        >
-          <option value="pending">Pending</option>
-          <option value="interview">Interview</option>
-          <option value="offer">Offer</option>
-          <option value="declined">Declined</option>
-          <option value="accepted">Accepted</option>
-        </select>
-        <textarea
-          placeholder="Notes"
+
+        <FormControl fullWidth margin="normal" required>
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={editForm.status}
+            onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+            label="Status"
+          >
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="interview">Interview</MenuItem>
+            <MenuItem value="offer">Offer</MenuItem>
+            <MenuItem value="declined">Declined</MenuItem>
+            <MenuItem value="accepted">Accepted</MenuItem>
+          </Select>
+        </FormControl>
+
+        <TextField
+          fullWidth
+          label="Notes"
+          multiline
+          rows={3}
           value={editForm.notes}
           onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+          margin="normal"
         />
-        <br />
-        <button type="submit" style={{ marginTop: '1rem' }}>Update Job</button>
-        <button type="button" onClick={() => setEditingJob(null)} style={{ marginLeft: '1rem' }}>Cancel</button>
-      </form>
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
+          <Button variant="contained" color="primary" type="submit">
+            Update Job
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={() => setEditingJob(null)}>
+            Cancel
+          </Button>
+        </Box>
+      </Box>
     )}
-    </div>
-    </div>
+    </Paper>
     </Box>
   );
 }
