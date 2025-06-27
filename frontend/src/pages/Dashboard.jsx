@@ -18,42 +18,44 @@ export default function Dashboard() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [fadeClass, setFadeClass] = useState('fade-enter-active');
   
-  //Job list pagination, and deletion
+  //Job list pagination
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
+
+  //Job list deletion
   const handleDelete = async (id) => {
-  const confirmDelete = window.confirm('Are you sure you want to delete this job?');
-  if (!confirmDelete) 
-    return;
-  try {
-    const token = localStorage.getItem('token');
-    const res = await fetch(`http://localhost:5000/api/jobs/${editingJob}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(editForm)
-    });
+    const confirmDelete = window.confirm('Are you sure you want to delete this job?');
+    if (!confirmDelete) return;
 
-    const text = await res.text(); // Grab raw response for debugging
-    console.log('Raw response:', text);
-
-    let data;
     try {
-      data = JSON.parse(text);
-    } catch (parseErr) {
-      throw new Error(`Failed to parse JSON: ${parseErr.message}. Response: ${text}`);
-    }
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/api/jobs/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!res.ok) throw new Error(data.message || 'Failed to update job');
-    // Update local state to remove the deleted job
-    setJobs(prevJobs => prevJobs.filter(job => job._id !== id));
-  } 
-  catch (err) {
-    alert('Error deleting job: ' + err.message);
-  }
+      const text = await res.text(); // For debugging
+      console.log('Raw response:', text);
+
+      if (!res.ok) {
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (parseErr) {
+          throw new Error(`Failed to parse JSON: ${parseErr.message}. Response: ${text}`);
+        }
+        throw new Error(data.message || 'Failed to delete job');
+      }
+
+      // Remove the job from local state
+      setJobs(prevJobs => prevJobs.filter(job => job._id !== id));
+    } catch (err) {
+      alert('Error deleting job: ' + err.message);
+    }
   };
+
   //End job list pagination, and deletion
   
   // Handle edit functionality
@@ -71,8 +73,8 @@ export default function Dashboard() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/jobs/${editingJob}`, {
-        method: 'PUT',
+      const res = await fetch(`http://localhost:5000/api/jobs/${id}`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
