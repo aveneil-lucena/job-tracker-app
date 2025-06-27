@@ -3,40 +3,44 @@ require('dotenv').config();
 const express = require('express');   // Import express
 const cors = require('cors');
 const app = express();                // Initialize app instance
-app.use(cors());
+//app.use(cors());
 
 const mongoose = require('mongoose');
 const mongoUri = process.env.MONGO_URI; 
 const PORT = process.env.PORT || 5000;
 
-// Middleware stuff :3
-app.use(express.json());
-const authRoutes = require('./routes/auth');
-app.use('/api/auth', authRoutes);
-const jobRoutes = require('./routes/jobs');
-app.use('/api/jobs', jobRoutes);
-const userRoutes = require('./routes/user');
-app.use('/api/users', userRoutes);
+// Optional test route
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
+
 app.use(cors({
-  origin: 'http://localhost:5173', // or 3000 depending on Vite config
+  origin: ['http://localhost:5173', 'https://job-tracker-app-0ssx.onrender.com'], // Replace with actual frontend URL later
   credentials: true
 }));
+// Middleware stuff :3
+app.use(express.json());
+
+app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/users', userRoutes);
+
+const authRoutes = require('./routes/auth');
+const jobRoutes = require('./routes/jobs');
+const userRoutes = require('./routes/user');
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
 
-const auth = require('./middleware/auth'); // import middleware here
+const auth = require('./middleware/auth');
 app.get('/api/test-auth', auth, (req, res) => {
   res.json({ message: 'Auth middleware working!', userId: req.user });
 });
 
 
-
-
-
-// Database connection
+// Database connection and server listen
 mongoose.connect(mongoUri)
     .then(() => {
       console.log('MongoDB connected successfully!');
@@ -46,7 +50,4 @@ mongoose.connect(mongoUri)
     })
     .catch((err) => console.error('MongoDB connection error:', err));
 
-// Optional test route
-app.get('/', (req, res) => {
-  res.send('Server is running!');
-});
+
