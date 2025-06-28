@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Button, TextField, Box, Typography, 
-        Paper, Snackbar, Alert } from '@mui/material';
+        Paper, Snackbar, Alert, Link } from '@mui/material';
 import backgroundImage from '../assets/lined-bg.jpg';
 
 //import Typography from '@mui/material/Typography';
@@ -103,6 +103,15 @@ export default function Login() {
             Login
           </Button>
         </form>
+
+        {/* Registration link */}
+        <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
+          Don't have an account?{' '}
+          <Link component={RouterLink} to="/register" underline="hover">
+            Register here
+          </Link>
+        </Typography>
+
         <Snackbar
           open={openSnackbar}
           autoHideDuration={1350}
