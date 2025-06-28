@@ -18,16 +18,16 @@ app.use(cors({
   origin: ['http://localhost:5173', 'https://job-tracker-app-0ssx.onrender.com'], // Replace with actual frontend URL later
   credentials: true
 }));
-// Middleware stuff :3
-app.use(express.json());
-
-app.use('/api/auth', authRoutes);
-app.use('/api/jobs', jobRoutes);
-app.use('/api/users', userRoutes);
 
 const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobs');
 const userRoutes = require('./routes/user');
+
+// Middleware stuff :3
+app.use(express.json());
+app.use('/api/auth', authRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/users', userRoutes);
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
