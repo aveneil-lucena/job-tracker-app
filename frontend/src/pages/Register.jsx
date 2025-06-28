@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Paper, Typography, TextField, Button, Snackbar, Alert, Link } from '@mui/material';
 import backgroundImage from '../assets/lined-bg.jpg';
@@ -12,6 +12,11 @@ export default function Register() {
   });
   const [error, setError] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [openWarning, setOpenWarning] = useState(false);
+
+  useEffect(() => {
+    setOpenWarning(true);
+  }, []);
 
   const handleChange = e => {
     setFormData(prev => ({
@@ -62,6 +67,31 @@ export default function Register() {
         padding: 0,
       }}
     >
+      <Snackbar
+        open={openWarning}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          zIndex: 1300,
+          '& .MuiAlert-root': {
+            backgroundColor: '#ffefc1',
+            color: '#7a4f01',
+            fontWeight: 500,
+            border: '1px solid #ffe58f',
+            boxShadow: '0 0 10px rgba(255, 206, 86, 0.5)',
+            animation: 'glow 2s ease-in-out infinite',
+          },
+          '@keyframes glow': {
+            '0%': { boxShadow: '0 0 10px rgba(255, 206, 86, 0.4)' },
+            '50%': { boxShadow: '0 0 20px rgba(255, 206, 86, 0.9)' },
+            '100%': { boxShadow: '0 0 10px rgba(255, 206, 86, 0.4)' },
+          },
+        }}
+      >
+        <Alert severity="warning" variant="filled" icon={false}>
+          ⚠️ This is a public demo. Please do not use your real email! If you want to use a test email, go to the login page and input: <strong>"test@email.com"</strong> & <strong>"password"</strong>.
+        </Alert>
+      </Snackbar>
+
       <Paper elevation={3} sx={{ p: 4, width: 350 }}>
         <Typography
           variant="h4"
