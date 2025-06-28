@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Paper, Typography, TextField, Button, Snackbar, Alert, Link } from '@mui/material';
+import backgroundImage from '../assets/lined-bg.jpg';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -9,6 +11,7 @@ export default function Register() {
     password: ''
   });
   const [error, setError] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleChange = e => {
     setFormData(prev => ({
@@ -21,8 +24,10 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
+      const res = await fetch(`${BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -34,23 +39,102 @@ export default function Register() {
         throw new Error(data.message || 'Registration failed');
       }
 
-      alert('Registration successful!');
-      navigate('/login');
+      setOpenSnackbar(true);
+      setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: 300 }}>
-        <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required />
-        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-        <button type="submit">Register</button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </form>
-    </div>
+    <Box
+      sx={{
+        height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        margin: 0,
+        padding: 0,
+      }}
+    >
+      <Paper elevation={3} sx={{ p: 4, width: 350 }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{ color: 'black', fontWeight: 600, textAlign: 'center' }}
+        >
+          Register
+        </Typography>
+
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="Username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          {error && (
+            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+              {error}
+            </Typography>
+          )}
+          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+            Register
+          </Button>
+        </form>
+
+        <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
+          Already have an account?{' '}
+          <Link href="/login" underline="hover">
+            Login here
+          </Link>
+        </Typography>
+
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={1500}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={() => setOpenSnackbar(false)}
+            severity="success"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            Registration successful!
+          </Alert>
+        </Snackbar>
+      </Paper>
+    </Box>
   );
 }
