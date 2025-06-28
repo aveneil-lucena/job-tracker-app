@@ -37,8 +37,8 @@ export default function Dashboard() {
         },
       });
 
-      const text = await res.text(); // For debugging
-      console.log('Raw response:', text);
+    const text = await res.text(); // For debugging
+    console.log('Raw response:', text);
 
       if (!res.ok) {
         let data;
@@ -55,9 +55,7 @@ export default function Dashboard() {
     } catch (err) {
       alert('Error deleting job: ' + err.message);
     }
-  };
-
-  //End job list pagination, and deletion
+  };//End job list pagination, and deletion
   
   // Handle edit functionality
   const handleEdit = (job) => {
@@ -69,13 +67,13 @@ export default function Dashboard() {
     notes: job.notes
     });
   };
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-
+  
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const handleUpdate = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/jobs/${id}`, {
-        method: 'DELETE',
+      const res = await fetch(`${BASE_URL}/jobs/${id}`, {
+        method: 'PUT', // ✅ Update method for updating
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
@@ -167,8 +165,10 @@ export default function Dashboard() {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        //minHeight: '100vh',
         width: '100vw',
+        height: '100vh',
+        //maxWidth: '100vw',
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -177,6 +177,7 @@ export default function Dashboard() {
         alignItems: 'center',
         paddingTop: '100px',
         overflowX: 'hidden',
+        overflowY: 'auto',
         boxSizing: 'border-box'
       }}
     >
@@ -186,15 +187,20 @@ export default function Dashboard() {
           padding: 4,
           width: '700px',
           minWidth: '500px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          backgroundColor: 'rgba(255, 255, 255, 0.75)',
           borderRadius: 2,
           color: 'black',
           mb: 4
         }}
       >
-      <h2 style={{ marginBottom: '1rem' }}>Job Dashboard</h2>
+      <h2 style={{ 
+        marginTop: '0rem', 
+        marginBottom: '0.25rem' }}>
+          Job Dashboard</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <label htmlFor="statusFilter">Filter by status: </label>
+      <label 
+        htmlFor="statusFilter" 
+        style={{color: 'grey'}}>Filter by status:  </label>
       
       <select
         id="statusFilter"
@@ -284,7 +290,10 @@ export default function Dashboard() {
             {editingJob === job._id && (
               <Box
                 component="form"
-                onSubmit={handleUpdate}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleUpdate(job._id);
+                }}
                 sx={{
                   mt: 2,
                   width: '100%',
