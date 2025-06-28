@@ -361,10 +361,14 @@ export default function Dashboard() {
       </div>
 
       {/* Pagination buttons */}
-      <div style=
-      {{ 
-        marginTop: '1rem', 
-      }}>
+      <div
+        style={{
+          marginTop: '1rem',
+          display: 'flex',
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}
+      >
         {Array.from({ length: Math.ceil(filteredJobs.length / jobsPerPage) }).map((_, index) => (
           <Button
             key={index}
@@ -378,6 +382,7 @@ export default function Dashboard() {
           </Button>
         ))}
       </div>
+
       {/* Edit buttons */}
 
     </Paper>
