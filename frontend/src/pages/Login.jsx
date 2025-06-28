@@ -160,7 +160,7 @@ export default function Login() {
             boxShadow: 'none',
           }}
         >
-          Please don't use your real email as this data is visible to me and I don't want your info! Just input a sample email and password. You can also use my test account: <strong>"test@email.com"</strong> and <strong>"password"</strong>, that works too.
+          Please don't use your real email as this data is visible to me and I don't want your info! Just input a sample email and password. You can also use a test account: <strong>"test@email.com"</strong> and <strong>"password"</strong>, that works too.
         </Alert>
       </Snackbar>
     </>
