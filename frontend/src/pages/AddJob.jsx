@@ -3,7 +3,9 @@ import { Box, Paper, Typography, TextField, Select, MenuItem, FormControl,
     InputLabel, Button, Snackbar, Alert } from '@mui/material';
 import backgroundImage from '../assets/lined-bg.jpg';
 
+
 const AddJob = () => {
+  
   const [formData, setFormData] = useState({
     title: '',
     company: '',
@@ -25,9 +27,10 @@ const AddJob = () => {
     setError('');
 
     const token = localStorage.getItem('token'); // make sure token is stored here after login
-
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    
     try {
-      const res = await fetch('http://localhost:5000/api/jobs', {
+      const res = await fetch(`${BASE_URL}/jobs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

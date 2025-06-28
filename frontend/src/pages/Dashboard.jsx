@@ -27,9 +27,10 @@ export default function Dashboard() {
     const confirmDelete = window.confirm('Are you sure you want to delete this job?');
     if (!confirmDelete) return;
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/jobs/${id}`, {
+      const res = await fetch(`${BASE_URL}/jobs/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
