@@ -58,51 +58,58 @@ export default function Dashboard() {
   };//End job list pagination, and deletion
   
   // Handle edit functionality
-  const handleEdit = (job) => {
+const handleEdit = (job) => {
   setEditingJob(job._id);
   setEditForm({
     title: job.title,
     company: job.company,
     status: job.status,
-    notes: job.notes
-    });
-  };
+    notes: job.notes,
+    dateApplied: job.dateApplied ? new Date(job.dateApplied).toISOString().slice(0, 10) : '',
+  });
+};
+
   
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const handleUpdate = async (id) => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${BASE_URL}/jobs/${id}`, {
-        method: 'PUT', // ✅ Update method for updating
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(editForm)
-      });
+const handleUpdate = async (id) => {
+  try {
+    const token = localStorage.getItem('token');
+    console.log('Updating job with data:', editForm);  // <-- Add this
+    const res = await fetch(`${BASE_URL}/jobs/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(editForm)
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || 'Failed to update job');
+    if (!res.ok) throw new Error(data.message || 'Failed to update job');
 
-      setJobs(prev =>
-        prev.map(job => job._id === editingJob ? { ...job, ...editForm } : job)
-      );
+    setJobs(prev =>
+      prev.map(job => job._id === editingJob ? { ...job, ...editForm } : job)
+    );
 
-      setEditingJob(null);
-      setEditForm({ title: '', company: '', status: '', notes: '' });
-    } catch (err) {
-      alert('Error updating job: ' + err.message);
-    }
-  };
+    setEditingJob(null);
+    setEditForm({ title: '', company: '', status: '', notes: '', dateApplied: '' });
+  } catch (err) {
+    alert('Error updating job: ' + err.message);
+  }
+};
+
+
+
   // End handle edit functionality
 
   // Job fetch
   useEffect(() => {
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const fetchJobs = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:5000/api/jobs', {
+        const res = await fetch(`${BASE_URL}/jobs`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -258,6 +265,11 @@ export default function Dashboard() {
                 <Typography variant="body2" color="text.secondary">
                   {job.company}
                 </Typography>
+<Typography variant="body2" color="text.secondary">
+  Applied on: {job.dateApplied ? new Date(job.dateApplied).toLocaleDateString() : '—'}
+</Typography>
+
+
                 <Chip
                   label={job.status.charAt(0).toUpperCase() + job.status.slice(1)}
                   color={getStatusColor(job.status)}
@@ -341,6 +353,17 @@ export default function Dashboard() {
                   onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
                   margin="normal"
                 />
+                    <TextField
+      fullWidth
+      label="Date Applied"
+      type="date"
+      value={editForm.dateApplied || ''}
+      onChange={(e) => setEditForm({ ...editForm, dateApplied: e.target.value })}
+      margin="normal"
+      InputLabelProps={{
+        shrink: true,
+      }}
+    />
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                   <Button type="submit" variant="contained" color="primary">
                     Save

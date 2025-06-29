@@ -10,10 +10,11 @@ const AddJob = () => {
     title: '',
     company: '',
     status: 'pending',
-    notes: ''
+    notes: '',
+    dateApplied: '',
   });
 
-  const [message, setMessage] = useState('');
+  //const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,7 +29,6 @@ const AddJob = () => {
 
     const token = localStorage.getItem('token'); // make sure token is stored here after login
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    
     try {
       const res = await fetch(`${BASE_URL}/jobs`, {
         method: 'POST',
@@ -45,7 +45,12 @@ const AddJob = () => {
       }
 
       setSuccess(true);
-      setFormData({ title: '', company: '', status: 'pending', notes: '' });
+      setFormData({ 
+        title: '', 
+        company: '', 
+        status: 'pending', 
+        notes: '',
+        dateApplied: '', });
     } catch (err) {
       setError(err.message);
     }
@@ -126,6 +131,17 @@ const AddJob = () => {
             rows={3}
             margin="normal"
           />
+          <TextField
+            label="Date Applied"
+            name="dateApplied"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={formData.dateApplied}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+
           {error && <Typography color="error" variant="body2">{error}</Typography>}
           <Button
             type="submit"

@@ -16,6 +16,10 @@ const JobSchema = new mongoose.Schema({
     enum: ['pending', 'offer', 'interview', 'declined', 'accepted'],
     default: 'pending',
   },
+  dateApplied: {
+    type: Date,
+    default: null, // no date by default
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

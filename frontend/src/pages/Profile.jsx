@@ -9,10 +9,11 @@ export default function Profile() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:5000/api/users/me', {
+        const res = await fetch(`${BASE_URL}/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

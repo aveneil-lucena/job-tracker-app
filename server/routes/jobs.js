@@ -8,10 +8,17 @@ const auth = require('../middleware/auth');
 // @access  Private (requires JWT)
 router.post('/', auth, async (req, res) => {
   try {
-    const { title, company, status, notes } = req.body;
+    const { title, company, status, notes, dateApplied } = req.body;
 
     if (!title || !company) {
       return res.status(400).json({ message: 'Title and company are required' });
+    }
+
+    // Convert dateApplied string (if any) to Date object or null
+    let parsedDate = null;
+    if (dateApplied) {
+      parsedDate = new Date(dateApplied);
+      if (isNaN(parsedDate)) parsedDate = null; // invalid date check
     }
 
     const newJob = new Job({
@@ -19,16 +26,19 @@ router.post('/', auth, async (req, res) => {
       company,
       status,
       notes,
-      createdBy: req.user, // From the auth middleware
+      dateApplied: parsedDate,
+      createdBy: req.user,
     });
 
     const savedJob = await newJob.save();
+
     res.status(201).json(savedJob);
   } catch (err) {
     console.error('Error creating job:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 // @route   GET /api/jobs
 // @desc    Get all jobs created by the logged-in user
@@ -99,9 +109,23 @@ router.delete('/:id', auth, async (req, res) => {
 // @access  Private
 router.put('/:id', auth, async (req, res) => {
   try {
+    const updateData = { ...req.body };
+
+  if (updateData.dateApplied) {
+    const parsedDate = new Date(updateData.dateApplied);
+    if (isNaN(parsedDate)) {
+      // Invalid date, remove it to avoid overwriting with invalid value
+      delete updateData.dateApplied;
+    } else {
+      updateData.dateApplied = parsedDate;
+    }
+  } else {
+    delete updateData.dateApplied;
+  }
+
     const job = await Job.findOneAndUpdate(
       { _id: req.params.id, createdBy: req.user },
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -115,5 +139,6 @@ router.put('/:id', auth, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
 
 module.exports = router;
