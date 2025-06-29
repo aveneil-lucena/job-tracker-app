@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://job-tracker-app-0ssx.onrender.com'], // Replace with actual frontend URL later
+  origin: ['https://job-tracker-app-0ssx.onrender.com'],
   credentials: true
 }));
 
