@@ -24,6 +24,7 @@ export default function Dashboard() {
   });
 
   const [statusFilter, setStatusFilter] = useState('all');
+  const [pendingFilter, setPendingFilter] = useState(null);
   const [fadeClass, setFadeClass] = useState('fade-enter-active');
   const [deletingJobId, setDeletingJobId] = useState(null);
 
@@ -142,14 +143,12 @@ const handleDelete = async (id) => {
     // Fade effect
     useEffect(() => {
     setFadeClass('fade-enter'); // Start fade-out
-
     const timeout = setTimeout(() => {
-      setFadeClass('fade-enter-active'); // Fade back in after slight delay
+    setFadeClass('fade-enter-active'); // Fade back in after slight delay
     }, 50); // Small delay to allow reflow
-
     return () => clearTimeout(timeout); // Clean up timeout
   }, [statusFilter]);
-    // end Fade effect
+    // End Fade effect
 
   // Filter jobs by status
   const filteredJobs =
@@ -228,10 +227,6 @@ const handleDelete = async (id) => {
         onChange={(e) => {
           const value = e.target.value;
           setStatusFilter(value);           // Update state immediately to keep dropdown in sync
-          setFadeClass('fade-exit');        // Trigger fade out
-          setTimeout(() => {
-            setFadeClass('fade-enter');     // Trigger fade in
-          }, 150); // Match this to your CSS transition duration
         }}
       >
         <option value="all">All</option>
@@ -405,7 +400,7 @@ const handleDelete = async (id) => {
                   fullWidth
                   label="Notes"
                   multiline
-                  rows={3}
+                  rows={2}
                   value={editForm.notes}
                   onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
                   margin="normal"
