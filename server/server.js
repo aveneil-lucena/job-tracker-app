@@ -36,11 +36,12 @@ app.use(cors({
 app.use((req, res, next) => {
   const origin = res.getHeader('Access-Control-Allow-Origin');
   if (origin && origin.endsWith('/')) {
-    console.log(`Fixing trailing slash in Access-Control-Allow-Origin: ${origin}`);
+    console.log('Fixing trailing slash on Access-Control-Allow-Origin:', origin);
     res.setHeader('Access-Control-Allow-Origin', origin.slice(0, -1));
   }
   next();
 });
+
 
 
 
