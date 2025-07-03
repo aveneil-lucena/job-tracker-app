@@ -33,6 +33,15 @@ app.use(cors({
   credentials: true
 }));
 
+app.use((req, res, next) => {
+  const originalSend = res.send;
+  res.send = function (body) {
+    console.log('Response headers before send:', res.getHeaders());
+    return originalSend.call(this, body);
+  };
+  next();
+});
+
 
 
 const authRoutes = require('./routes/auth');
