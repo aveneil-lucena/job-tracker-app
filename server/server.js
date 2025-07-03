@@ -14,8 +14,8 @@ app.get('/', (req, res) => {
 });
 
 app.use(cors({
-  origin: ['http://localhost:5173'], // change to render url later (https://job-tracker-app-0ssx.onrender.com)
-  credentials: true
+  origin: ['https://job-tracker-app-0ssx.onrender.com/api'], // change to render url later (https://job-tracker-app-0ssx.onrender.com)
+  credentials: true,
 }));
 
 const authRoutes = require('./routes/auth');
