@@ -9,6 +9,8 @@ import Tooltip from '@mui/material/Tooltip';
 import '../App.css';
 
 export default function Dashboard() {
+  const [searchTerm, setSearchTerm] = useState('');
+
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState('');
 
@@ -24,7 +26,7 @@ export default function Dashboard() {
   });
 
   const [statusFilter, setStatusFilter] = useState('all');
-  const [pendingFilter, setPendingFilter] = useState(null);
+  //const [pendingFilter, setPendingFilter] = useState(null);
   const [fadeClass, setFadeClass] = useState('fade-enter-active');
   const [deletingJobId, setDeletingJobId] = useState(null);
 
@@ -156,10 +158,14 @@ const handleDelete = async (id) => {
     ? jobs
     : jobs.filter((job) => job.status === statusFilter);
 
+  const searchedJobs = filteredJobs.filter((job) =>
+  job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  job.company.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   // Calculate current jobs for pagination
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const currentJobs = searchedJobs.slice(indexOfFirstJob, indexOfLastJob);
   
      //console.log('Current Jobs:', jobs);
   
@@ -217,6 +223,18 @@ const handleDelete = async (id) => {
         marginBottom: '0.25rem' }}>
           Job Dashboard</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      <label htmlFor="searchJobs" style={{ color: 'grey', marginLeft: '1rem' }}>
+          Search Jobs:
+        </label>
+        <input
+          id="searchJobs"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by title or company"
+          style={{ marginLeft: '0.5rem', padding: '0.25rem 0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+        />
+
       <label 
         htmlFor="statusFilter" 
         style={{color: 'grey'}}>Filter by status:  </label>
