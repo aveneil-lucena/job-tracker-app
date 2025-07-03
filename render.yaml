@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: backend-api
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    routes:
+      - type: rewrite
+        path: /*
+        destination: /
