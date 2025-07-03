@@ -3,6 +3,9 @@ import backgroundImage from '../assets/lined-bg.jpg';
 import {  TextField, Select, MenuItem, InputLabel, FormControl, Typography,
   Box, Paper, Button, Chip } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Tooltip from '@mui/material/Tooltip';
 import '../App.css';
 
 export default function Dashboard() {
@@ -244,11 +247,11 @@ const handleDelete = async (id) => {
         {currentJobs.length > 0 ? (
       <ul style={{ paddingLeft: 0, margin: 0 }}>
         {currentJobs.map(job => (
-<li
-  key={job._id}
-  className={deletingJobId === job._id ? 'fade-out' : ''}
-  style={{ listStyle: 'none', marginBottom: '1rem' }}
->
+      <li
+        key={job._id}
+        className={deletingJobId === job._id ? 'fade-out' : ''}
+        style={{ listStyle: 'none', marginBottom: '1rem' }}
+      >
 
         <Box
           sx={{
@@ -274,8 +277,49 @@ const handleDelete = async (id) => {
               }}
             >
               <Box>
-                <Typography variant="subtitle1" fontWeight="bold">
+                <Typography variant="subtitle1" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   {job.title}
+                  {job.notes && (
+                  <Tooltip
+                    title={job.notes}
+                    placement="top"
+                    arrow
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: '#000',      // Tooltip background
+                          color: '#fff',                // Text color
+                          fontSize: '0.95rem',          // Font size
+                          maxWidth: 300,
+                          whiteSpace: 'pre-wrap',
+                          border: '1px solid #888',     // Optional border
+                          boxShadow: 3,                 // Optional shadow
+                        },
+                      },
+                    }}
+                  >
+                    <span
+                      style={{
+                        borderRadius: '50%',
+                        backgroundColor: '#777777',
+                        color: 'white',
+                        width: '18px',
+                        height: '18px',
+                        display: 'inline-flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        fontSize: '8px',
+                        //marginLeft: '6px',
+                              cursor: 'pointer',      // ✅ Restores expected hover cursor
+                              userSelect: 'none',     // ✅ Prevents selection
+                              WebkitUserDrag: 'none', // ✅ Disables drag on Safari
+                      }}
+                      draggable={false}
+                    >
+                      i
+                    </span>
+                  </Tooltip>
+                )}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {job.company}
