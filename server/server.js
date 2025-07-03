@@ -13,9 +13,22 @@ app.get('/', (req, res) => {
   res.send('Server is running!');
 });
 
+const allowedOrigins = [
+  'https://job-tracker-app-gules.vercel.app',
+  'http://localhost:5173' // optional, for local dev
+];
+
 app.use(cors({
-  origin: true,
-  credentials: true,
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow requests like curl or Postman
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
 }));
 
 const authRoutes = require('./routes/auth');
@@ -43,7 +56,7 @@ app.get('/api/test-auth', auth, (req, res) => {
 mongoose.connect(mongoUri)
     .then(() => {
       console.log('MongoDB connected successfully!');
-      app.listen(PORT, () => {
+      app.listen(PORT || 5000, () => {
         console.log(`Server running on port ${PORT}`);
       });
     })
