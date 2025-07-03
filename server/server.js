@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(cors({
-  origin: ['https://job-tracker-app-gules.vercel.app/'],
+  origin: 'https://job-tracker-app-gules.vercel.app/',
   credentials: true,
 }));
 
@@ -22,7 +22,7 @@ const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobs');
 const userRoutes = require('./routes/user');
 
-// Middleware stuff :3
+// Middleware route stuff :3
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
