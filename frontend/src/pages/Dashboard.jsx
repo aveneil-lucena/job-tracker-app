@@ -203,7 +203,10 @@ const handleDelete = async (id) => {
         paddingTop: '100px',
         overflowX: 'hidden',
         overflowY: 'auto',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        flexWrap: 'wrap',
+        gap: 6,
+        mb: 3
       }}
     >
       <Paper
@@ -223,8 +226,10 @@ const handleDelete = async (id) => {
         marginBottom: '0.25rem' }}>
           Job Dashboard</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <label htmlFor="searchJobs" style={{ color: 'grey', marginLeft: '1rem' }}>
-          Search Jobs:
+
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <label htmlFor="searchJobs" style={{ color: 'grey', marginRight: 8 }}>
+        Search Jobs:
         </label>
         <input
           id="searchJobs"
@@ -232,21 +237,39 @@ const handleDelete = async (id) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search by title or company"
-          style={{ marginLeft: '0.5rem', padding: '0.25rem 0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
+          style={{
+            padding: '6px 10px',
+            borderRadius: 6,
+            border: '1px solid #ccc',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            minWidth: 220,
+            fontSize: 14,
+            margin: 4
+          }}
+        /></Box>
 
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <label 
         htmlFor="statusFilter" 
         style={{color: 'grey'}}>Filter by status:  </label>
-      
       <select
         id="statusFilter"
         value={statusFilter}
         onChange={(e) => {
           const value = e.target.value;
           setStatusFilter(value);           // Update state immediately to keep dropdown in sync
+        }}      
+          style={{
+          padding: '6px 10px',
+          borderRadius: 6,
+          border: '1px solid #ccc',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          //backgroundColor: 'grey',
+          cursor: 'pointer',
+          minWidth: 130,
+          margin: 7
         }}
-      >
+        >
         <option value="all">All</option>
         <option value="pending">Pending</option>
         <option value="interview">Interview</option>
@@ -254,7 +277,8 @@ const handleDelete = async (id) => {
         <option value="declined">Declined</option>
         <option value="accepted">Accepted</option>
       </select>
-
+      </Box>
+      
       {/* Job list */}
       <div className={`job-list ${fadeClass}`}>
         {currentJobs.length > 0 ? (
@@ -263,7 +287,7 @@ const handleDelete = async (id) => {
       <li
         key={job._id}
         className={deletingJobId === job._id ? 'fade-out' : ''}
-        style={{ listStyle: 'none', marginBottom: '1rem' }}
+        style={{ listStyle: 'none', marginTop: '0.7rem', marginBottom: '0.8rem' }}
       >
 
         <Box
