@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 const allowedOrigins = [
-  'https://job-tracker-app-gules.vercel.app/',
+  'https://job-tracker-app-gules.vercel.app',
   'http://localhost:5173' // optional, for local dev
 ];
 
