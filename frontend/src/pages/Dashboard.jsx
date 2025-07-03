@@ -3,6 +3,7 @@ import backgroundImage from '../assets/lined-bg.jpg';
 import {  TextField, Select, MenuItem, InputLabel, FormControl, Typography,
   Box, Paper, Button, Chip } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import '../App.css';
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState([]);
@@ -21,59 +22,58 @@ export default function Dashboard() {
 
   const [statusFilter, setStatusFilter] = useState('all');
   const [fadeClass, setFadeClass] = useState('fade-enter-active');
-  
+  const [deletingJobId, setDeletingJobId] = useState(null);
+
   //Job list pagination
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
 
   //Job list deletion
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this job?');
-    if (!confirmDelete) return;
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm('Are you sure you want to delete this job?');
+  if (!confirmDelete) return;
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${BASE_URL}/jobs/${id}`, {
+  try {
+    const token = localStorage.getItem('token');
+
+    // Step 1: trigger fade-out
+    setDeletingJobId(id);
+
+    // Step 2: delay actual delete after CSS animation
+    setTimeout(async () => {
+      const res = await fetch(`${BASE_URL}/api/jobs/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-    const text = await res.text(); // For debugging
-    console.log('Raw response:', text);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to delete job');
 
-      if (!res.ok) {
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (parseErr) {
-          throw new Error(`Failed to parse JSON: ${parseErr.message}. Response: ${text}`);
-        }
-        throw new Error(data.message || 'Failed to delete job');
-      }
+      // Step 3: remove from list
+      setJobs(prev => prev.filter(job => job._id !== id));
+      setDeletingJobId(null);
+    }, 300); // 300ms to match CSS fade time
+  } catch (err) {
+    alert('Error deleting job: ' + err.message);
+    setDeletingJobId(null);
+  }
+};
 
-      // Remove the job from local state
-      setJobs(prev =>
-        prev.map(job => job._id === editingJob ? { ...job, ...editForm } : job)
-      );
-    } catch (err) {
-      alert('Error deleting job: ' + err.message);
-    }
-  };//End job list pagination, and deletion
   
   // Handle edit functionality
-const handleEdit = (job) => {
-  setEditingJob(job._id);
-  setEditForm({
-    title: job.title,
-    company: job.company,
-    status: job.status,
-    notes: job.notes,
-    dateApplied: job.dateApplied ? new Date(job.dateApplied).toISOString().slice(0, 10) : '',
-  });
-};
+  const handleEdit = (job) => {
+    setEditingJob(job._id);
+    setEditForm({
+      title: job.title,
+      company: job.company,
+      status: job.status,
+      notes: job.notes,
+      dateApplied: job.dateApplied ? new Date(job.dateApplied) : null,
+    });
+  };
 
   
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -88,7 +88,7 @@ const handleEdit = (job) => {
 
     console.log('Updating job with data:', editForm);
 
-    const res = await fetch(`${BASE_URL}/jobs/${id}`, {
+    const res = await fetch(`${BASE_URL}/api/jobs/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ const handleEdit = (job) => {
     const fetchJobs = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${BASE_URL}/api/auth/jobs`, {
+        const res = await fetch(`${BASE_URL}/api/jobs`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -244,7 +244,12 @@ const handleEdit = (job) => {
         {currentJobs.length > 0 ? (
       <ul style={{ paddingLeft: 0, margin: 0 }}>
         {currentJobs.map(job => (
-        <li key={job._id} style={{ listStyle: 'none', marginBottom: '1rem' }}>
+<li
+  key={job._id}
+  className={deletingJobId === job._id ? 'fade-out' : ''}
+  style={{ listStyle: 'none', marginBottom: '1rem' }}
+>
+
         <Box
           sx={{
             display: 'flex',
@@ -361,19 +366,12 @@ const handleEdit = (job) => {
                   onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
                   margin="normal"
                 />
-                <TextField
-                  label="Date Applied (ISO Format)"
-                  name="dateApplied"
-                  value={editForm.dateApplied || ''}
-                  onChange={(e) => setEditForm({ ...editForm, dateApplied: e.target.value })}
-                  placeholder="e.g. 2025-06-30T00:00:00.000+00:00"
-                  margin="normal"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
+                <DatePicker
+                  label="Date Applied"
+                  value={editForm.dateApplied}
+                  onChange={(newValue) => setEditForm(prev => ({ ...prev, dateApplied: newValue }))}
+                  renderInput={(params) => <TextField {...params} />}
                 />
-
-
-
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                   <Button type="submit" variant="contained" color="primary">
                     Save
