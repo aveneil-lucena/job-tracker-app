@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const express = require('express');   // Import express
 const cors = require('cors');
 const app = express();                // Initialize app instance
@@ -9,13 +8,13 @@ const mongoose = require('mongoose');
 const mongoUri = process.env.MONGO_URI; 
 const PORT = process.env.PORT || 5000;
 
-// Optional test route
+// Optional server test route
 app.get('/', (req, res) => {
   res.send('Server is running!');
 });
 
 app.use(cors({
-  origin: ['https://job-tracker-app-0ssx.onrender.com'],
+  origin: ['http://localhost:5173'], // change to render url later (https://job-tracker-app-0ssx.onrender.com)
   credentials: true
 }));
 

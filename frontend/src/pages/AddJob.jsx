@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import { Box, Paper, Typography, TextField, Select, MenuItem, FormControl, 
     InputLabel, Button, Snackbar, Alert } from '@mui/material';
 import backgroundImage from '../assets/lined-bg.jpg';
-
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const AddJob = () => {
-  
-  const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState({
     title: '',
     company: '',
     status: 'pending',
     notes: '',
-    dateApplied: '',
+    dateApplied: Date.now,
   });
 
   //const [message, setMessage] = useState('');
@@ -19,24 +18,40 @@ const AddJob = () => {
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const token = localStorage.getItem('token'); // make sure token is stored here after login
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = localStorage.getItem('token'); // make sure token is stored here after login
+    
+    // Convert Date object to ISO string (or null)
+const payload = {
+  ...formData,
+  dateApplied: formData.dateApplied instanceof Date
+    ? formData.dateApplied.toISOString()
+    : null,
+};
+
+
+
+
+    console.log("📤 Sending job:", payload);
+
     try {
       const res = await fetch(`${BASE_URL}/jobs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -50,7 +65,7 @@ const AddJob = () => {
         company: '', 
         status: 'pending', 
         notes: '',
-        dateApplied: '', });
+        dateApplied: null });
     } catch (err) {
       setError(err.message);
     }
@@ -86,7 +101,8 @@ const AddJob = () => {
         <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
           Add New Job
         </Typography>
-        <form onSubmit={handleSubmit}>
+
+        <form onSubmit={handleSubmit} >
           <TextField
             label="Job Title"
             name="title"
@@ -131,16 +147,17 @@ const AddJob = () => {
             rows={3}
             margin="normal"
           />
-          <TextField
-            label="Date Applied"
-            name="dateApplied"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={formData.dateApplied}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
+<DatePicker
+  label="Date Applied"
+  value={formData.dateApplied}
+  onChange={(newDate) => {
+    setFormData(prev => ({
+      ...prev,
+      dateApplied: newDate,  // ✅ don't convert to ISO string here
+    }));
+  }}
+/>
+
 
           {error && <Typography color="error" variant="body2">{error}</Typography>}
           <Button
@@ -156,17 +173,17 @@ const AddJob = () => {
             }}
           >
             Add Job
-          </Button>
+          </Button>   
         </form>
         <Snackbar
           open={success}
-          autoHideDuration={2500}
+          autoHideDuration={3000}
           onClose={() => setSuccess(false)}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
-          <Alert severity="success" sx={{ width: '100%' }}>
-            Job added successfully!
-          </Alert>
+            <Alert severity="success" variant="filled" sx={{ width: '150%' }}>
+              Job added!
+            </Alert>
         </Snackbar>
       </Paper>
     </Box>

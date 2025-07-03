@@ -18,7 +18,7 @@ const JobSchema = new mongoose.Schema({
   },
   dateApplied: {
     type: Date,
-    default: null, // no date by default
+    default: Date.now,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -34,6 +34,6 @@ const JobSchema = new mongoose.Schema({
     trim: true,
     default: '',
   },
-});
+}, {strict: true});
 
 module.exports = mongoose.model('Job', JobSchema);

@@ -2,19 +2,23 @@ import React, { useEffect, useState } from 'react';
 import backgroundImage from '../assets/lined-bg.jpg';
 import {  TextField, Select, MenuItem, InputLabel, FormControl, Typography,
   Box, Paper, Button, Chip } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState('');
 
+  
   const [editingJob, setEditingJob] = useState(null);
   const [editForm, setEditForm] = useState({
     title: '',
     company: '',
     status: '',
-    notes: ''
+    notes: '',
+    dateApplied: '',
+    createdAt: ''
   });
-  
+
   const [statusFilter, setStatusFilter] = useState('all');
   const [fadeClass, setFadeClass] = useState('fade-enter-active');
   
@@ -51,7 +55,9 @@ export default function Dashboard() {
       }
 
       // Remove the job from local state
-      setJobs(prevJobs => prevJobs.filter(job => job._id !== id));
+      setJobs(prev =>
+        prev.map(job => job._id === editingJob ? { ...job, ...editForm } : job)
+      );
     } catch (err) {
       alert('Error deleting job: ' + err.message);
     }
@@ -71,17 +77,24 @@ const handleEdit = (job) => {
 
   
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const handleUpdate = async (id) => {
+  const handleUpdate = async (id) => {
   try {
     const token = localStorage.getItem('token');
-    console.log('Updating job with data:', editForm);  // <-- Add this
+
+    const formattedEditForm = {
+  ...editForm,
+  dateApplied: editForm.dateApplied ? new Date(editForm.dateApplied).toISOString() : null
+  };
+
+    console.log('Updating job with data:', editForm);
+
     const res = await fetch(`${BASE_URL}/jobs/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify(editForm)
+      body: JSON.stringify(formattedEditForm)
     });
 
     const data = await res.json();
@@ -98,9 +111,6 @@ const handleUpdate = async (id) => {
     alert('Error updating job: ' + err.message);
   }
 };
-
-
-
   // End handle edit functionality
 
   // Job fetch
@@ -116,7 +126,7 @@ const handleUpdate = async (id) => {
         });
 
         const data = await res.json();
-
+        console.log("📦 Jobs from backend:", data);
         if (!res.ok) throw new Error(data.message || 'Failed to fetch jobs');
         setJobs(data);
       } catch (err) {
@@ -149,7 +159,7 @@ const handleUpdate = async (id) => {
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   
-  console.log('Current Jobs:', jobs);
+     //console.log('Current Jobs:', jobs);
   
   // Conditional status colors
   const getStatusColor = (status) => {
@@ -265,11 +275,9 @@ const handleUpdate = async (id) => {
                 <Typography variant="body2" color="text.secondary">
                   {job.company}
                 </Typography>
-<Typography variant="body2" color="text.secondary">
-  Applied on: {job.dateApplied ? new Date(job.dateApplied).toLocaleDateString() : '—'}
-</Typography>
-
-
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+                  Applied on: {job.dateApplied ? new Date(job.dateApplied).toLocaleDateString() : ''}
+                </Typography>
                 <Chip
                   label={job.status.charAt(0).toUpperCase() + job.status.slice(1)}
                   color={getStatusColor(job.status)}
@@ -353,17 +361,19 @@ const handleUpdate = async (id) => {
                   onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
                   margin="normal"
                 />
-                    <TextField
-      fullWidth
-      label="Date Applied"
-      type="date"
-      value={editForm.dateApplied || ''}
-      onChange={(e) => setEditForm({ ...editForm, dateApplied: e.target.value })}
-      margin="normal"
-      InputLabelProps={{
-        shrink: true,
-      }}
-    />
+                <TextField
+                  label="Date Applied (ISO Format)"
+                  name="dateApplied"
+                  value={editForm.dateApplied || ''}
+                  onChange={(e) => setEditForm({ ...editForm, dateApplied: e.target.value })}
+                  placeholder="e.g. 2025-06-30T00:00:00.000+00:00"
+                  margin="normal"
+                  fullWidth
+                  InputLabelProps={{ shrink: true }}
+                />
+
+
+
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                   <Button type="submit" variant="contained" color="primary">
                     Save
