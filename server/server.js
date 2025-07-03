@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(cors({
-  origin: ['https://job-tracker-app-0ssx.onrender.com/api'], // change to render url later (https://job-tracker-app-0ssx.onrender.com)
+  origin: ['https://job-tracker-app-gules.vercel.app/'],
   credentials: true,
 }));
 
