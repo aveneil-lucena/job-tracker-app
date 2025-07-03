@@ -119,7 +119,7 @@ const handleEdit = (job) => {
     const fetchJobs = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${BASE_URL}/jobs`, {
+        const res = await fetch(`${BASE_URL}/api/auth/jobs`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

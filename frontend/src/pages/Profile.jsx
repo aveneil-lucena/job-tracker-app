@@ -13,7 +13,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${BASE_URL}/users/me`, {
+        const res = await fetch(`${BASE_URL}/api/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -43,7 +43,7 @@ export default function Profile() {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   try {
     const token = localStorage.getItem('token');
-    const res = await fetch(`${BASE_URL}/users/me`, {
+    const res = await fetch(`${BASE_URL}/api/users/me`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
