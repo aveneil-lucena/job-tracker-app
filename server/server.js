@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(cors({
-  origin: 'https://job-tracker-app-gules.vercel.app/',
+  origin: true,
   credentials: true,
 }));
 
