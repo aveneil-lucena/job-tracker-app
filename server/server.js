@@ -20,16 +20,20 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // allow requests like curl or Postman
+    console.log('Received Origin:', origin);
+    if (!origin) return callback(null, true); // allow curl/Postman
 
     if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('Origin allowed:', origin);
       callback(null, true);
     } else {
+      console.log('Origin NOT allowed:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true
 }));
+
 
 const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobs');
