@@ -217,8 +217,8 @@ export default function Dashboard() {
       <Paper
         elevation={3}
         sx={{
-          p: { xs: 2, sm: 4 },
-          width: '98%',
+          p: { xs: 1, sm: 4 },
+          width: '95%',
           maxWidth: '700px',
           mx: 'auto', // Center horizontally
           backgroundColor: 'rgba(255, 255, 255, 0.75)',
