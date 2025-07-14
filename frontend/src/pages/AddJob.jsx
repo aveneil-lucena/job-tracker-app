@@ -10,7 +10,7 @@ const AddJob = () => {
     company: '',
     status: 'pending',
     notes: '',
-    dateApplied: null,
+    dateApplied: Date.now,
   });
 
   //const [message, setMessage] = useState('');
@@ -32,17 +32,20 @@ const AddJob = () => {
     const token = localStorage.getItem('token'); // make sure token is stored here after login
     
     // Convert Date object to ISO string (or null)
-    const payload = {
-      ...formData,
-      dateApplied: formData.dateApplied instanceof Date
-        ? formData.dateApplied.toISOString()
-        : null,
-    };
+const payload = {
+  ...formData,
+  dateApplied: formData.dateApplied instanceof Date
+    ? formData.dateApplied.toISOString()
+    : null,
+};
+
+
+
 
     console.log("📤 Sending job:", payload);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/jobs`, {
+      const res = await fetch(`${BASE_URL}/jobs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,16 +151,13 @@ const AddJob = () => {
   label="Date Applied"
   value={formData.dateApplied}
   onChange={(newDate) => {
-    setFormData(prev => ({ ...prev, dateApplied: newDate }));
+    setFormData(prev => ({
+      ...prev,
+      dateApplied: newDate,  // ✅ don't convert to ISO string here
+    }));
   }}
-  renderInput={(params) => (
-    <TextField
-      {...params}
-      fullWidth
-      margin="normal"
-    />
-  )}
 />
+
 
           {error && <Typography color="error" variant="body2">{error}</Typography>}
           <Button
