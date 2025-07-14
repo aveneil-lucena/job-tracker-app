@@ -45,7 +45,7 @@ const payload = {
     console.log("📤 Sending job:", payload);
 
     try {
-      const res = await fetch(`${BASE_URL}/jobs`, {
+      const res = await fetch(`${BASE_URL}/api/jobs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
