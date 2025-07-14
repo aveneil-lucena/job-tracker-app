@@ -40,7 +40,7 @@ export default function Dashboard() {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${BASE_URL}/jobs/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/jobs/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ const handleEdit = (job) => {
 
     console.log('Updating job with data:', editForm);
 
-    const res = await fetch(`${BASE_URL}/jobs/${id}`, {
+    const res = await fetch(`${BASE_URL}/api/jobs/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
