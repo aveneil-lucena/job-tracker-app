@@ -5,7 +5,7 @@ import backgroundImage from '../assets/lined-bg.jpg';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const AddJob = () => {
-    const [formData, setFormData] = useState({
+    const [editForm, setEditForm] = useState({
     title: '',
     company: '',
     status: 'pending',
@@ -18,7 +18,7 @@ const AddJob = () => {
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setEditForm(prev => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
@@ -33,9 +33,9 @@ const AddJob = () => {
     
     // Convert Date object to ISO string (or null)
 const payload = {
-  ...formData,
-  dateApplied: formData.dateApplied instanceof Date
-    ? formData.dateApplied.toISOString()
+  ...editForm,
+  dateApplied: editForm.dateApplied instanceof Date
+    ? editForm.dateApplied.toISOString()
     : null,
 };
 
@@ -60,7 +60,7 @@ const payload = {
       }
 
       setSuccess(true);
-      setFormData({ 
+      setEditForm({ 
         title: '', 
         company: '', 
         status: 'pending', 
@@ -106,7 +106,7 @@ const payload = {
           <TextField
             label="Job Title"
             name="title"
-            value={formData.title}
+            value={editForm.title}
             onChange={handleChange}
             fullWidth
             required
@@ -115,7 +115,7 @@ const payload = {
           <TextField
             label="Company"
             name="company"
-            value={formData.company}
+            value={editForm.company}
             onChange={handleChange}
             fullWidth
             required
@@ -125,7 +125,7 @@ const payload = {
             <InputLabel>Status</InputLabel>
             <Select
               name="status"
-              value={formData.status}
+              value={editForm.status}
               label="Status"
               onChange={handleChange}
               required
@@ -140,25 +140,23 @@ const payload = {
           <TextField
             label="Notes"
             name="notes"
-            value={formData.notes}
+            value={editForm.notes}
             onChange={handleChange}
             fullWidth
             multiline
             rows={3}
             margin="normal"
           />
-<DatePicker
-  label="Date Applied"
-  value={formData.dateApplied}
-  onChange={(newDate) => {
-    setFormData(prev => ({
-      ...prev,
-      dateApplied: newDate,  // ✅ don't convert to ISO string here
-    }));
-  }}
-/>
-
-
+          <DatePicker
+            label="Date Applied"
+            value={editForm.dateApplied}
+            onChange={(newDate) => {
+              setEditForm(prev => ({
+                ...prev,
+                dateApplied: newDate,  // ✅ don't convert to ISO string here
+              }));
+            }}
+          />
           {error && <Typography color="error" variant="body2">{error}</Typography>}
           <Button
             type="submit"

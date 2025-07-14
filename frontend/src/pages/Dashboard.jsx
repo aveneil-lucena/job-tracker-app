@@ -70,16 +70,16 @@ export default function Dashboard() {
   };//End job list pagination, and deletion
   
   // Handle edit functionality
-const handleEdit = (job) => {
-  setEditingJob(job._id);
-  setEditForm({
-    title: job.title,
-    company: job.company,
-    status: job.status,
-    notes: job.notes,
-    dateApplied: job.dateApplied ? new Date(job.dateApplied).toISOString().slice(0, 10) : '',
-  });
-};
+  const handleEdit = (job) => {
+    setEditingJob(job._id);
+    setEditForm({
+      title: job.title,
+      company: job.company,
+      status: job.status,
+      notes: job.notes,
+      dateApplied: job.dateApplied ? new Date(job.dateApplied).toISOString().slice(0, 10) : '',
+    });
+  };
 
   
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -447,15 +447,15 @@ const handleEdit = (job) => {
                   onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
                   margin="normal"
                 />
-                <TextField
-                  label="Date Applied (ISO Format)"
-                  name="dateApplied"
-                  value={editForm.dateApplied || ''}
-                  onChange={(e) => setEditForm({ ...editForm, dateApplied: e.target.value })}
-                  placeholder="e.g. 2025-06-30T00:00:00.000+00:00"
-                  margin="normal"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
+                <DatePicker
+                  label="Date Applied"
+                  value={editForm.dateApplied}
+                  onChange={(newDate) => {
+                    setEditForm(prev => ({
+                      ...prev,
+                      dateApplied: newDate,  // ✅ don't convert to ISO string here
+                    }));
+                  }}
                 />
 
 
