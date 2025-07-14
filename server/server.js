@@ -15,23 +15,18 @@ app.get('/', (req, res) => {
 
 const allowedOrigins = [
   'https://job-tracker-app-rust.vercel.app',
-  'http://localhost:5173' // optional, for local dev
+  'http://localhost:5173'
 ];
 
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-
-    const normalizedOrigin = origin.endsWith('/') ? origin.slice(0, -1) : origin;
-
-    if (allowedOrigins.includes(normalizedOrigin)) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error(`Blocked by CORS: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
-  },
-  credentials: true
-}));
+
 
 app.use((req, res, next) => {
   const origin = res.getHeader('Access-Control-Allow-Origin');
