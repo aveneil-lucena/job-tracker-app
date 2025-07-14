@@ -134,6 +134,7 @@ const payload = {
               <MenuItem value="interview">Interview</MenuItem>
               <MenuItem value="offer">Offer</MenuItem>
               <MenuItem value="declined">Declined</MenuItem>
+              <MenuItem value="rejected">Rejected</MenuItem>
               <MenuItem value="accepted">Accepted</MenuItem>
             </Select>
           </FormControl>
