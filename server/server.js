@@ -26,16 +26,9 @@ app.use(cors({
       console.error(`Blocked by CORS: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
-
-
-app.use((req, res, next) => {
-  const origin = res.getHeader('Access-Control-Allow-Origin');
-  if (origin && origin.endsWith('/')) {
-    console.log('Fixing trailing slash on Access-Control-Allow-Origin:', origin);
-    res.setHeader('Access-Control-Allow-Origin', origin.slice(0, -1));
-  }
-  next();
-});
+  },
+  credentials: true
+}));
 
 
 
@@ -71,5 +64,3 @@ mongoose.connect(mongoUri)
       });
     })
     .catch((err) => console.error('MongoDB connection error:', err));
-
-
