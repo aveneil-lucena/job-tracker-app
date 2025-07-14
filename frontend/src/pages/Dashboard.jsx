@@ -347,9 +347,9 @@ const handleDelete = async (id) => {
                         alignItems: 'center',
                         fontSize: '8px',
                         //marginLeft: '6px',
-                              cursor: 'pointer',      // ✅ Restores expected hover cursor
-                              userSelect: 'none',     // ✅ Prevents selection
-                              WebkitUserDrag: 'none', // ✅ Disables drag on Safari
+                              cursor: 'pointer',      // Restores expected hover cursor
+                              userSelect: 'none',     // Prevents selection
+                              WebkitUserDrag: 'none', // Disables drag on Safari
                       }}
                       draggable={false}
                     >
