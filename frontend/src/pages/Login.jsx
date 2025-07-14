@@ -8,11 +8,10 @@ export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-
   // Warning toast state
   const [openWarning, setOpenWarning] = useState(false);
-
   useEffect(() => {
     setOpenWarning(true); // show warning on mount
   }, []);
@@ -49,6 +48,8 @@ export default function Login() {
       setTimeout(() => navigate('/dashboard'), 1500);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false); // stop loading regardless of success/error
     }
   };
 
@@ -79,6 +80,21 @@ export default function Login() {
             Login
           </Typography>
 
+          {/* Show loading message */}
+          {loading && (
+            <Typography
+              sx={{
+                textAlign: 'center',
+                mb: 2,
+                color: 'orange',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              }}
+            >
+              Waking up server... Please wait.
+            </Typography>
+          )}
+
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
@@ -89,6 +105,7 @@ export default function Login() {
               onChange={handleChange}
               margin="normal"
               required
+              disabled={loading} // disable while loading
             />
             <TextField
               fullWidth
@@ -99,13 +116,20 @@ export default function Login() {
               onChange={handleChange}
               margin="normal"
               required
+              disabled={loading} // disable while loading
             />
             {error && (
               <Typography color="error" variant="body2" sx={{ mt: 1 }}>
                 {error}
               </Typography>
             )}
-            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+            <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary" 
+            fullWidth 
+            sx={{ mt: 2 }}
+            disabled={loading} >
               Login
             </Button>
           </form>
