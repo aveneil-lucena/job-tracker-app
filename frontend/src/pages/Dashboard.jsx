@@ -309,7 +309,7 @@ export default function Dashboard() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            flexWrap: 'wrap', // allow wrap instead of forcing one line
+            flexWrap: 'wrap',
             padding: 2,
             backgroundColor: 'white',
             borderRadius: 2,
@@ -327,64 +327,75 @@ export default function Dashboard() {
                 alignItems: 'center',
               }}
             >
-              <Box>
-                <Typography variant="subtitle1" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {job.title}
-                  {job.notes && (
-                  <Tooltip
-                    title={job.notes}
-                    placement="top"
-                    arrow
-                    componentsProps={{
-                      tooltip: {
-                        sx: {
-                          backgroundColor: '#000',      // Tooltip background
-                          color: '#fff',                // Text color
-                          fontSize: '0.95rem',          // Font size
-                          maxWidth: 300,
-                          whiteSpace: 'pre-wrap',
-                          border: '1px solid #888',     // Optional border
-                          boxShadow: 3,                 // Optional shadow
-                        },
-                      },
+        <Box>
+          {/* Job Title */}
+          <Typography
+            variant="subtitle1"
+            fontWeight="bold"
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          >
+            {job.title}
+          </Typography>
+
+          {/* Company */}
+          <Typography variant="body2" color="text.secondary">
+            {job.company}
+          </Typography>
+
+          {/* Date Applied */}
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+            Applied on: {job.dateApplied ? new Date(job.dateApplied).toLocaleDateString() : ''}
+          </Typography>
+
+          {/* Status + Notes Tooltip */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+            <Chip
+              label={job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+              color={getStatusColor(job.status)}
+              size="small"
+            />
+            {job.notes && (
+              <Tooltip
+                title={job.notes}
+                placement="top"
+                arrow
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      backgroundColor: '#000',
+                      color: '#fff',
+                      fontSize: '0.95rem',
+                      maxWidth: 300,
+                      whiteSpace: 'pre-wrap',
+                      border: '1px solid #888',
+                      boxShadow: 3,
+                    },
+                  },
+                }}
+              >
+                  <span
+                    style={{
+                      borderRadius: '50%',
+                      backgroundColor: '#777777',
+                      color: 'white',
+                      width: '18px',
+                      height: '18px',
+                      display: 'inline-flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontSize: '10px',
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      WebkitUserDrag: 'none',
                     }}
+                    draggable={false}
                   >
-                    <span
-                      style={{
-                        borderRadius: '50%',
-                        backgroundColor: '#777777',
-                        color: 'white',
-                        width: '18px',
-                        height: '18px',
-                        display: 'inline-flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        fontSize: '8px',
-                        //marginLeft: '6px',
-                              cursor: 'pointer',      // Restores expected hover cursor
-                              userSelect: 'none',     // Prevents selection
-                              WebkitUserDrag: 'none', // Disables drag on Safari
-                      }}
-                      draggable={false}
-                    >
-                      i
-                    </span>
-                  </Tooltip>
-                )}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {job.company}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-                  Applied on: {job.dateApplied ? new Date(job.dateApplied).toLocaleDateString() : ''}
-                </Typography>
-                <Chip
-                  label={job.status.charAt(0).toUpperCase() + job.status.slice(1)}
-                  color={getStatusColor(job.status)}
-                  size="small"
-                  sx={{ mt: 0.5 }}
-                />
-              </Box>
+                    i
+                  </span>
+                </Tooltip>
+              )}
+            </Box>
+          </Box>
 
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <Button
