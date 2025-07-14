@@ -211,10 +211,11 @@ export default function Dashboard() {
         mt: 1
       }}
     >
+      
       <Paper
         elevation={3}
         sx={{
-          padding: 4,
+          p: { xs: 2, sm: 4 },
           width: '100%',
           maxWidth: '700px',
           mx: 'auto', // Center horizontally
@@ -290,7 +291,13 @@ export default function Dashboard() {
       <li
         key={job._id}
         className={deletingJobId === job._id ? 'fade-out' : ''}
-        style={{ listStyle: 'none', marginTop: '0.7rem', marginBottom: '0.8rem' }}
+          style={{
+            listStyle: 'none',
+            marginTop: '0.7rem',
+            marginBottom: '0.8rem',
+            paddingLeft: '0.5rem',
+            paddingRight: '0.5rem',
+          }}
       >
 
         <Box
