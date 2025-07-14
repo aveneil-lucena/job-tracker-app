@@ -359,6 +359,8 @@ export default function Dashboard() {
                 title={job.notes}
                 placement="top"
                 arrow
+                enterTouchDelay={0} // Makes it pop up instantly on tap
+                leaveTouchDelay={3000} // Keeps it open longer after tap
                 componentsProps={{
                   tooltip: {
                     sx: {
