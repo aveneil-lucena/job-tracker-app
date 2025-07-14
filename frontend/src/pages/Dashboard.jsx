@@ -198,23 +198,26 @@ export default function Dashboard() {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: { xs: 'column', sm: 'row' },
         alignItems: 'center',
-        paddingTop: '100px',
+        pt: { xs: 8, sm: 10, md: 12 },
+        px: 2,
         overflowX: 'hidden',
         overflowY: 'auto',
         boxSizing: 'border-box',
         flexWrap: 'wrap',
-        gap: 6,
-        mb: 3
+        gap: 1,
+        mb: 3,
+        mt: 1
       }}
     >
       <Paper
         elevation={3}
         sx={{
           padding: 4,
-          width: '700px',
-          minWidth: '500px',
+          width: '100%',
+          maxWidth: '700px',
+          mx: 'auto', // Center horizontally
           backgroundColor: 'rgba(255, 255, 255, 0.75)',
           borderRadius: 2,
           color: 'black',
