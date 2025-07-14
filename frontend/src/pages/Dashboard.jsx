@@ -285,7 +285,7 @@ export default function Dashboard() {
         <option value="interview">Interview</option>
         <option value="offer">Offer</option>
         <option value="declined">Declined</option>
-        <option value="rejected">Rejected</option>
+        {/* <option value="rejected">Rejected</option> */}
         <option value="accepted">Accepted</option>
       </select>
       </Box>
@@ -466,7 +466,7 @@ export default function Dashboard() {
                     <MenuItem value="interview">Interview</MenuItem>
                     <MenuItem value="offer">Offer</MenuItem>
                     <MenuItem value="declined">Declined</MenuItem>
-                    <MenuItem value="rejected">Rejected</MenuItem>
+                    { /* <MenuItem value="rejected">Rejected</MenuItem> */ }
                     <MenuItem value="accepted">Accepted</MenuItem>
                   </Select>
                 </FormControl>

@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+if (mongoose.models.Job) {
+  delete mongoose.models.Job;
+}
+
 const JobSchema = new mongoose.Schema({
   title: {
     type: String,
