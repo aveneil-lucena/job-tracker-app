@@ -4,7 +4,7 @@ import {  TextField, Select, MenuItem, InputLabel, FormControl, Typography,
   Box, Paper, Button, Chip } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+//import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Tooltip from '@mui/material/Tooltip';
 
 export default function Dashboard() {
