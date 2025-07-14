@@ -199,13 +199,15 @@ export default function Dashboard() {
         backgroundPosition: 'center',
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'row' },
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
         alignItems: 'center',
         pt: { xs: 8, sm: 10, md: 12 },
         px: 2,
+        //padding: 2,
         overflowX: 'hidden',
         overflowY: 'auto',
         boxSizing: 'border-box',
-        flexWrap: 'wrap',
         gap: 1,
         mb: 3,
         mt: 1
@@ -216,7 +218,7 @@ export default function Dashboard() {
         elevation={3}
         sx={{
           p: { xs: 2, sm: 4 },
-          width: '100%',
+          width: '98%',
           maxWidth: '700px',
           mx: 'auto', // Center horizontally
           backgroundColor: 'rgba(255, 255, 255, 0.75)',
@@ -231,26 +233,28 @@ export default function Dashboard() {
           Job Dashboard</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
+      { /* Search and Filter section */}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <label htmlFor="searchJobs" style={{ color: 'grey', marginRight: 8 }}>
-        Search Jobs:
-        </label>
-        <input
-          id="searchJobs"
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by title or company"
-          style={{
-            padding: '6px 10px',
-            borderRadius: 6,
-            border: '1px solid #ccc',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-            minWidth: 220,
-            fontSize: 14,
-            margin: 4
-          }}
-        /></Box>
+        <label htmlFor="searchJobs" style={{ color: 'grey', marginRight: 8 }}>
+          Search Jobs:
+          </label>
+          <input
+            id="searchJobs"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by title or company"
+            style={{
+              padding: '6px 10px',
+              borderRadius: 6,
+              border: '1px solid #ccc',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              minWidth: 220,
+              fontSize: 14,
+              margin: 4
+            }}
+          />
+      </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <label 
