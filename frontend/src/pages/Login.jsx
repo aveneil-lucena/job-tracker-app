@@ -104,7 +104,7 @@ export default function Login() {
                 border: '1px solid #81d4fa',
               }}
             >
-              {'Waking up the server, please wait a bit! (It\'ll take less than a minute.'}
+              {'Waking up the server, please wait a bit! (It\'ll take less than a minute.)'}
             </Alert>
           )}
 
