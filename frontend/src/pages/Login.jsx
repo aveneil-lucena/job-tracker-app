@@ -35,7 +35,7 @@ export default function Login() {
     // Start a timeout to show "Waking up" alert only if request takes > 1 sec
     const wakeUpTimeout = setTimeout(() => {
       setIsWakingUp(true);
-    }, 450);
+    }, 650);
 
     try {
       const res = await fetch(`${BASE_URL}/api/auth/login`, {
